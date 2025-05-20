@@ -36,6 +36,13 @@ async def get_displayed(db: DB):
 
     return stations
 
+@router.get("/{identifier}", status_code=status.HTTP_200_OK, response_model=StationResource, response_model_by_alias=False)
+async def get_station(db: DB, identifier: str = Path()):
+    stationService = StationService(db)
+    station = stationService.getStation(identifier)
+
+    return station
+
 @router.post("", status_code=status.HTTP_201_CREATED)
 async def save(db: DB, createRequest: CreateStation):
     stationService = StationService(db)

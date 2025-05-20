@@ -18,4 +18,7 @@ class Station(Base, TimestampMixin):
     y = Column(Integer, default=20)
     width = Column(Integer, default=300)
     height = Column(Integer, default=200)
+    location = Column(String, nullable=True)
+    type = Column(String, nullable=True)
     lines = relationship("Line", back_populates="station")
+    transformers = relationship("Transformer", back_populates="station")
