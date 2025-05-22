@@ -6,6 +6,7 @@ class StationType(TypedDict):
     name: Optional[str] = None
     identifier: Optional[str] = None
     voltageLevel: Optional[float] = None
+    type: Optional[str] = None
     display: Optional[bool] = None
     x: Optional[int] = None
     y: Optional[int] = None
@@ -22,6 +23,7 @@ class StationService:
         stationModel = Station(
             name=data["name"],
             identifier=data["identifier"],
+            type=data["type"],
             voltage_level=data.get("voltageLevel"),
             display=data.get("display")
         )

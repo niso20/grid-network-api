@@ -4,6 +4,7 @@ from typing import Optional, Any
 class CreateStation(BaseModel):
     name: str = Field(min_length=1)
     identifier: str = Field(min_length=1)
+    type: str = Field(min_length=1)
     voltageLevel: Optional[float] = None
     display: Optional[bool] = None
 
@@ -11,6 +12,7 @@ class CreateStation(BaseModel):
 class UpdateStation(BaseModel):
     name: Optional[str] = None
     identifier: Optional[str] = None
+    type: Optional[str] = None
     voltageLevel: Optional[float] = None
     x: Optional[int] = None
     y: Optional[int] = None
