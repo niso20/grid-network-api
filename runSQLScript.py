@@ -8,7 +8,6 @@ def runScripts():
         # Run your SQL scripts in order
         sql_scripts = [
             "manufacturers.sql"
-            "transformers.sql",
         ]
 
         for script in sql_scripts:
