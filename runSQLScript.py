@@ -3,6 +3,20 @@ from sqlalchemy import text
 from database import engine  # Import your engine
 import os
 
+def runScripts():
+    try:
+        # Run your SQL scripts in order
+        sql_scripts = [
+            "transformers.sql",
+            "manufacturers.sql"
+        ]
+
+        for script in sql_scripts:
+            run_sql_script(script)
+
+        print("Initial data loaded successfully!")
+    except Exception as e:
+        print(f"Error loading initial data: {e}")
 
 def run_sql_script(file_path: str):
     """Run SQL script from file"""
@@ -32,3 +46,5 @@ def run_sql_script(file_path: str):
     except Exception as e:
         print(f"Error executing SQL script {file_path}: {e}")
         raise e
+
+
