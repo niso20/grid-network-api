@@ -1,12 +1,13 @@
 from middlewares.DbMiddleware import DB
 from typing import TypedDict, Optional
 from models import Station
+from enums.StationType import StationType
 
 class StationType(TypedDict):
     name: Optional[str] = None
     identifier: Optional[str] = None
     voltageLevel: Optional[float] = None
-    type: Optional[str] = None
+    type: Optional[StationType] = None
     display: Optional[bool] = None
     x: Optional[int] = None
     y: Optional[int] = None

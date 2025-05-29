@@ -1,52 +1,54 @@
 from fastapi import  APIRouter, Depends, HTTPException, Path
 from starlette import status
-from models import Station
 from typing import List
 from middlewares.DbMiddleware import DB
-from resources.LineResource import LineResource
-from requests.LineRequest import CreateLine, UpdateLine
-from services.LineService import LineService
+from resources.TransformerResource import TransformerResource
+from requests.TransformerRequest import SaveTransformer, UpdateTransformer
+from services.TransformerService import TransformerService
 
 router = APIRouter(
-    prefix='/lines',
-    tags=['lines']
+    prefix='/transformers',
+    tags=['transformers']
 )
 
-@router.get("", status_code=status.HTTP_200_OK, response_model=List[LineResource], response_model_by_alias=False)
+@router.get("", status_code=status.HTTP_200_OK, response_model=List[TransformerResource], response_model_by_alias=False)
 async def get_all(db: DB):
-    lineService = LineService(db)
-    lines = lineService.getLines()
+    transformerService = TransformerService(db)
+    transformers = transformerService.getTransformers()
 
-    return lines
+    return transformers
+
+@router.get("/{id}", status_code=status.HTTP_200_OK, response_model=TransformerResource, response_model_by_alias=False)
+async def get_one(db: DB, id: int = Path()):
+    transformerService = TransformerService(db)
+    transformer = transformerService.getTransformer(id)
+
+    if not transformer:
+        raise HTTPException(status_code=400, detail="Transformer does not exist")
+
+    return transformer
 
 @router.post("", status_code=status.HTTP_201_CREATED)
-async def save(db: DB, createRequest: CreateLine):
-    lineService = LineService(db)
+async def save(db: DB, createRequest: SaveTransformer):
+    transformerService = TransformerService(db)
     data = createRequest.model_dump()
 
-    exists = lineService.getLine(data["identifier"], data["stationId"])
+    exists = transformerService.getTransformerByName(data["name"])
 
     if(exists):
-        raise HTTPException(status_code=400, detail="Line exists")
+        raise HTTPException(status_code=400, detail="Transformer exists")
 
-    lineService.save(data)
+    transformerService.save(data)
 
 
-@router.put("/{identifier}", status_code=status.HTTP_201_CREATED)
-async def save(db: DB, updateRequest: UpdateLine, identifier: str = Path()):
-    lineService = LineService(db)
+@router.put("/{id}", status_code=status.HTTP_201_CREATED)
+async def save(db: DB, updateRequest: UpdateTransformer, id: int = Path()):
+    transformerService = TransformerService(db)
     data = updateRequest.model_dump()
 
-    line = lineService.getLine(identifier)
+    transformer = transformerService.getTransformer(id)
 
-    if line:
-        lineService.update(data, line)
+    if transformer:
+        transformerService.update(data, transformer)
     else:
-        if (
-                "name" in data and data["name"] is not None
-                and
-                "identifier" in data and data["identifier"] is not None
-        ):
-            lineService.save(data)
-        else:
-            raise HTTPException(status_code=400, detail="Line does not exist")
+        raise HTTPException(status_code=400, detail="Transformer does not exist")

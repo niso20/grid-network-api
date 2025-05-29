@@ -1,7 +1,7 @@
 from pydantic import BaseModel, Field, ConfigDict
 from typing import List, Optional
 from resources.flats.FlatLineResource import FlatLineResource
-
+from resources.flats.FlatTransformerResource import FlatTransformerResource
 
 class StationResource(BaseModel):
     tableId: int = Field(..., alias="id")
@@ -14,6 +14,7 @@ class StationResource(BaseModel):
     width: int
     height: int
     lines: Optional[List[FlatLineResource]] = None  # optional!
+    transformers: Optional[List[FlatTransformerResource]] = None
     # lines: List[LineResource] = []
 
     # class Config:

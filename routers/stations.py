@@ -41,6 +41,9 @@ async def get_station(db: DB, identifier: str = Path()):
     stationService = StationService(db)
     station = stationService.getStation(identifier)
 
+    if not station:
+        raise HTTPException(status_code=400, detail="Station does not exist")
+
     return station
 
 @router.post("", status_code=status.HTTP_201_CREATED)

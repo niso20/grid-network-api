@@ -1,66 +1,39 @@
 from middlewares.DbMiddleware import DB
 from typing import TypedDict, Optional
-from models import Transformer
+from models import Manufacturer
 
-class TransformerType(TypedDict):
+class ManufacturerType(TypedDict):
     name: Optional[str] = None
-    manufacturerId: Optional[int] = None
-    serialNo: Optional[str] = None
-    powerRating: Optional[int] = None
-    powerRatingUnit: Optional[str] = None
-    typeOfCooling: Optional[str] = None
-    voltageRating: Optional[str] = None
-    manufactureYear: Optional[int] = None
-    installationYear: Optional[int] = None
-    stationId: Optional[int] = None
 
-class TransformerService:
+class ManufacturerService:
 
     def __init__(self, db:DB):
         self.__db = db
 
-    def save(self, data:TransformerType):
-        transformerModel = Transformer(
-            name=data["name"],
-            manufacturer_id=data["manufacturerId"],
-            serial_no=data.get("serialNo"),
-            power_rating=data["powerRating"],
-            power_rating_unit=data["powerRatingUnit"],
-            type_of_cooling=data.get("typeOfCooling"),
-            voltage_rating=data["voltageRating"],
-            manufacture_year=data.get("manufactureYear"),
-            installation_year=data.get("installationYear"),
-            station_id=data["stationId"]
+    def save(self, data:ManufacturerType):
+        manufacturerModel = Manufacturer(
+            name=data["name"]
         )
 
-        self.__db.add(transformerModel)
+        self.__db.add(manufacturerModel)
         self.__db.commit()
-        self.__db.refresh(transformerModel)
+        self.__db.refresh(manufacturerModel)
 
-        return transformerModel
+        return manufacturerModel
 
-    def update(self, data:TransformerType, transformer:Transformer):
-        if "name" in data and data["name"] is not None: transformer.name = data["name"]
-        if "manufacturerId" in data and data["manufacturerId"] is not None: transformer.manufacturer_id = data["manufacturerId"]
-        if "serialNo" in data and data["serialNo"] is not None: transformer.serial_no = data["serialNo"]
-        if "powerRating" in data and data["powerRating"] is not None: transformer.power_rating = data["powerRating"]
-        if "powerRatingUnit" in data and data["powerRatingUnit"] is not None: transformer.power_rating_unit = data["powerRatingUnit"]
-        if "typeOfCooling" in data and data["typeOfCooling"] is not None: transformer.type_of_cooling = data["typeOfCooling"]
-        if "voltageRating" in data and data["voltageRating"] is not None: transformer.voltage_rating = data["voltageRating"]
-        if "manufactureYear" in data and data["manufactureYear"] is not None: transformer.manufacture_year = data["manufactureYear"]
-        if "installationYear" in data and data["installationYear"] is not None: transformer.installation_year = data["installationYear"]
-        if "stationId" in data and data["stationId"] is not None: transformer.station_id = data["stationId"]
+    def update(self, data:ManufacturerType, manufacturer:Manufacturer):
+        if "name" in data and data["name"] is not None: manufacturer.name = data["name"]
 
         self.__db.commit()
-        self.__db.refresh(transformer)
+        self.__db.refresh(manufacturer)
 
-        return transformer
+        return manufacturer
 
-    def getTransformers(self):
-        return self.__db.query(Transformer).all()
+    def getManufacturers(self):
+        return self.__db.query(Manufacturer).all()
 
-    def getTransformer(self, id):
-        return self.__db.query(Transformer).filter(Transformer.id == id).first()
+    def getManufacturer(self, id):
+        return self.__db.query(Manufacturer).filter(Manufacturer.id == id).first()
 
-    def getTransformerByName(self, name):
-        return self.__db.query(Transformer).filter(Transformer.name == name).first()
+    def getManufacturerByName(self, name):
+        return self.__db.query(Manufacturer).filter(Manufacturer.name == name).first()

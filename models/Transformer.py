@@ -10,10 +10,10 @@ class Transformer(Base, TimestampMixin):
     __tablename__ = 'transformers'
 
     id = Column(Integer, primary_key=True, index=True)
-    name = Column(String)
+    name = Column(String, unique=True)
     manufacturer_id = Column(Integer, ForeignKey("manufacturers.id"), index=True)
     serial_no = Column(String, nullable=True)
-    power_rating = Column(Integer, default=False)
+    power_rating = Column(Integer)
     power_rating_unit = Column(String)
     type_of_cooling = Column(String, nullable=True)
     voltage_rating = Column(String)

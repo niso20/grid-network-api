@@ -1,2 +1,5 @@
 database.py
 alembic.ini
+.env
+*.sql
+runSQLScript.py
