@@ -5,3 +5,4 @@ database2.py
 .env
 *.sql
 runSQLScript.py
+runSQLScript2.py

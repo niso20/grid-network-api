@@ -12,23 +12,12 @@ from routers import connections
 from routers import transformers
 from routers import manufacturers
 from services.MqttService import start_mqtt, mqtt_queue
-from runSQLScript import run_sql_script
+from runSQLScript import runScripts
 
 # Define the lifespan handler
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    try:
-        # Run your SQL scripts in order
-        sql_scripts = [
-            "transformers.sql",
-        ]
-
-        for script in sql_scripts:
-            run_sql_script(script)
-
-        print("Initial data loaded successfully!")
-    except Exception as e:
-        print(f"Error loading initial data: {e}")
+    runScripts()
 
     loop = asyncio.get_running_loop()
     # Start MQTT listener
