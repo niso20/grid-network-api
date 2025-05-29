@@ -17,18 +17,18 @@ from runSQLScript import run_sql_script
 # Define the lifespan handler
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # try:
-    #     # Run your SQL scripts in order
-    #     sql_scripts = [
-    #         "transformers.sql",
-    #     ]
-    #
-    #     for script in sql_scripts:
-    #         run_sql_script(script)
-    #
-    #     print("Initial data loaded successfully!")
-    # except Exception as e:
-    #     print(f"Error loading initial data: {e}")
+    try:
+        # Run your SQL scripts in order
+        sql_scripts = [
+            "transformers.sql",
+        ]
+
+        for script in sql_scripts:
+            run_sql_script(script)
+
+        print("Initial data loaded successfully!")
+    except Exception as e:
+        print(f"Error loading initial data: {e}")
 
     loop = asyncio.get_running_loop()
     # Start MQTT listener
