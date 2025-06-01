@@ -1,49 +1,59 @@
 from middlewares.DbMiddleware import DB
 from typing import TypedDict, Optional
-from models import Line
+from sqlalchemy import select
+from models import Role
+from enums.Role import Role as RoleEnum
 
-class LineType(TypedDict):
+class RoleType(TypedDict):
     name: Optional[str] = None
-    identifier: Optional[str] = None
-    voltageLevel: Optional[float] = None
-    stationId: Optional[int] = None
-    x: Optional[int] = None
-    y: Optional[int] = None
 
-class LineService:
+class RoleService:
 
     def __init__(self, db:DB):
         self.__db = db
+        self.__role = select(Role)
 
-    def save(self, data:LineType):
-        lineModel = Line(
-            name=data["name"],
-            identifier=data["identifier"],
-            station_id=data["stationId"],
-            voltage_level=data.get("voltageLevel")
+    def save(self, data:RoleType):
+        roleModel = Role(
+            name=data["name"]
         )
 
-        self.__db.add(lineModel)
+        self.__db.add(roleModel)
         self.__db.commit()
-        self.__db.refresh(lineModel)
+        self.__db.refresh(roleModel)
 
-        return lineModel
+        return roleModel
 
-    def update(self, data:LineType, line:Line):
-        if "name" in data and data["name"] is not None: line.name = data["name"]
-        if "identifier" in data and data["identifier"] is not None: line.identifier = data["identifier"]
-        if "voltageLevel" in data and data["voltageLevel"] is not None: line.voltage_level = data["voltageLevel"]
-        if "x" in data and data["x"] is not None: line.x = data["x"]
-        if "y" in data and data["y"] is not None: line.y = data["y"]
-        if "stationId" in data and data["stationId"] is not None: line.station_id = data["stationId"]
+    def update(self, data:RoleType, role:Role):
+        if "name" in data and data["name"] is not None: role.name = data["name"]
 
         self.__db.commit()
-        self.__db.refresh(line)
+        self.__db.refresh(role)
 
-        return line
+        return role
 
-    def getLines(self):
-        return self.__db.query(Line).all()
+    def getRoles(self):
+        # return self.__db.execute(self.__role).scalars().all()
+        return self.__db.query(Role).all()
 
-    def getLine(self, identifier, stationId):
-        return self.__db.query(Line).filter(Line.station_id == stationId).filter(Line.identifier == identifier).first()
+    def getRole(self, id):
+        # stmt = select(Role).where(Role.id == id)
+        # return self.__db.execute(stmt).scalar_one_or_none()
+        return self.__db.query(Role).filter(Role.id == id).first()
+
+    def getRoleByName(self, name):
+        # stmt = select(Role).where(Role.name == name)
+        # return self.__db.execute(stmt).scalar_one_or_none()
+        return self.__db.query(Role).filter(Role.name == name).first()
+
+    def superAdmin(self):
+        return self.getRoleByName(RoleEnum.SUPER_ADMIN)
+
+    def admin(self):
+        return self.getRoleByName(RoleEnum.ADMIN)
+
+    def manager(self):
+        return self.getRoleByName(RoleEnum.MANAGER)
+
+    def operator(self):
+        return self.getRoleByName(RoleEnum.OPERATOR)

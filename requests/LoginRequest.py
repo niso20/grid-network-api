@@ -1,17 +1,23 @@
 from pydantic import BaseModel, Field
 from typing import Optional
 
-class CreateLine(BaseModel):
-    name: str = Field(min_length=1)
-    identifier: str = Field(min_length=1)
-    stationId: int
-    voltageLevel: Optional[float] = None
+class Login(BaseModel):
+    username: str = Field(
+                            min_length=1,
+                            description="Username is required and cannot be empty",
+                            json_schema_extra={"error_msg": "Username is required"}
+                          )
+    password: str = Field(
+        min_length=1,
+        description="Password is required and cannot be empty",
+        json_schema_extra={"error_msg": "Password is required"}
+    )
 
-
-class UpdateLine(BaseModel):
-    name: Optional[str] = None
-    identifier: Optional[str] = None
-    stationId: Optional[int] = None
-    voltageLevel: Optional[float] = None
-    x: Optional[int] = None
-    y: Optional[int] = None
+    model_config = {
+        "json_schema_extra": {
+            "example": {
+                "username": "your_username",
+                "password": "your_password"
+            }
+        }
+    }

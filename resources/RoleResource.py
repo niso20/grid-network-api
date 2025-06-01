@@ -1,18 +1,10 @@
-# schemas/LineResource.py
+# schemas/RoleResource.py
 from pydantic import BaseModel, Field, ConfigDict
 from typing import List, Optional, ForwardRef, TYPE_CHECKING
-from resources.flats.FlatStationResource import FlatStationResource
-from resources.flats.FlatConnectionResource import FlatConnectionResource
 
-class LineResource(BaseModel):
-    tableId: int = Field(..., alias="id")
-    id: str = Field(..., alias="identifier")  # map identifier → id
+class RoleResource(BaseModel):
+    id: int
     name: str
-    x: int
-    y: int
-    station: Optional[FlatStationResource] = None  # <-- Optional relationship
-    outgoingConnections: Optional[List[FlatConnectionResource]] = None
-    incomingConnections: Optional[List[FlatConnectionResource]] = None
 
     # class Config:
     #     orm_mode = True

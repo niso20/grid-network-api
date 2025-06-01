@@ -1,39 +1,53 @@
 from middlewares.DbMiddleware import DB
 from typing import TypedDict, Optional
-from models import Role
+from models import User
+from passlib.context import CryptContext
 
-class RoleType(TypedDict):
-    name: Optional[str] = None
+class UserType(TypedDict):
+    firstname: Optional[str] = None
+    surname: Optional[str] = None
+    username: Optional[str] = None
+    password: Optional[str] = None
+    roleId: Optional[str] = None
 
-class RoleService:
+class UserService:
 
     def __init__(self, db:DB):
         self.__db = db
 
-    def save(self, data:RoleType):
-        roleModel = Role(
-            name=data["name"]
+    def save(self, data:UserType):
+        bcryptContext = CryptContext(schemes=['bcrypt'], deprecated='auto')
+
+        userModel = User(
+            firstname=data["firstname"],
+            surname=data.get("surname"),
+            username=data["username"],
+            password=bcryptContext.hash(data["password"]),
+            role_id=data["roleId"]
         )
 
-        self.__db.add(roleModel)
+        self.__db.add(userModel)
         self.__db.commit()
-        self.__db.refresh(roleModel)
+        self.__db.refresh(userModel)
 
-        return roleModel
+        return userModel
 
-    def update(self, data:RoleType, role:Role):
-        if "name" in data and data["name"] is not None: role.name = data["name"]
+    def update(self, data:UserType, user:User):
+        if "firstname" in data and data["firstname"] is not None: user.firstname = data["firstname"]
+        if "surname" in data and data["surname"] is not None: user.surname = data["surname"]
+        if "username" in data and data["username"] is not None: user.username = data["username"]
+        if "roleId" in data and data["roleId"] is not None: user.role_id = data["roleId"]
 
         self.__db.commit()
-        self.__db.refresh(role)
+        self.__db.refresh(user)
 
-        return role
+        return user
 
-    def getRoles(self):
-        return self.__db.query(Role).all()
+    def getUsers(self):
+        return self.__db.query(User).all()
 
-    def getRole(self, id):
-        return self.__db.query(Role).filter(Role.id == id).first()
+    def getUser(self, id):
+        return self.__db.query(User).filter(User.id == id).first()
     
-    def getRoleByName(self, name):
-        return self.__db.query(Role).filter(Role.name == name).first()
+    def getUserByUsername(self, username):
+        return self.__db.query(User).filter(User.username == username).first()

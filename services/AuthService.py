@@ -1,53 +1,48 @@
 from middlewares.DbMiddleware import DB
 from typing import TypedDict, Optional
+from datetime import timedelta,datetime, timezone
+from jose import jwt
+import os
 from models import User
 from passlib.context import CryptContext
+from services.UserService import UserService
 
-class UserType(TypedDict):
-    firstname: Optional[str] = None
-    surname: Optional[str] = None
+class UserLogin(TypedDict):
     username: Optional[str] = None
     password: Optional[str] = None
-    roleId: Optional[str] = None
 
-class UserService:
+class AuthService:
 
     def __init__(self, db:DB):
         self.__db = db
 
-    def save(self, data:UserType):
+    def authenticate(self, data:UserLogin):
         bcryptContext = CryptContext(schemes=['bcrypt'], deprecated='auto')
+        userService = UserService(self.__db)
 
-        userModel = User(
-            firstname=data["firstname"],
-            surname=data.get("surname"),
-            username=data["username"],
-            password=bcryptContext.hash(data["password"]),
-            role_id=data["roleId"]
-        )
+        user = userService.getUserByUsername(data["username"])
+        if not user:
+            return False
 
-        self.__db.add(userModel)
-        self.__db.commit()
-        self.__db.refresh(userModel)
-
-        return userModel
-
-    def update(self, data:UserType, user:User):
-        if "firstname" in data and data["firstname"] is not None: user.firstname = data["firstname"]
-        if "surname" in data and data["surname"] is not None: user.surname = data["surname"]
-        if "username" in data and data["username"] is not None: user.username = data["username"]
-        if "roleId" in data and data["roleId"] is not None: user.role_id = data["roleId"]
-
-        self.__db.commit()
-        self.__db.refresh(user)
+        if not bcryptContext.verify(data["password"], user.password):
+            return False
 
         return user
 
-    def getUsers(self):
-        return self.__db.query(User).all()
+    def getAccessToken(self, user:User, ):
+        secretKey = os.getenv("JWT_SECRET")
+        Algorithm = 'HS256'
+        encode = {
+            'username': user.username,
+            'firstname': user.firstname,
+            'surname': user.surname,
+            'role': {
+                'id': user.role.id,
+                'name': user.role.name
+            } if user.role else None
+        }
+        minsToExpire = 60*60*60
+        expires = datetime.now(timezone.utc) + timedelta(minsToExpire)
+        encode.update({'exp': expires})
 
-    def getUser(self, id):
-        return self.__db.query(User).filter(User.id == id).first()
-    
-    def getUserByUsername(self, username):
-        return self.__db.query(User).filter(User.username == username).first()
+        return {'token': jwt.encode(encode, secretKey, algorithm=Algorithm), 'expiry': minsToExpire}

@@ -3,12 +3,10 @@ from sqlalchemy import Column, Integer, String, Boolean, Float, ForeignKey
 from sqlalchemy.orm import relationship
 from models.Base import TimestampMixin
 
-class User(Base, TimestampMixin):
-    __tablename__ = 'users'
+class Role(Base, TimestampMixin):
+    __tablename__ = 'roles'
 
     id = Column(Integer, primary_key=True, index=True)
-    firstname = Column(String)
-    surname = Column(String, nullable=True)
-    role_id = Column(Integer, ForeignKey("roles.id"))
+    name = Column(String)
 
-    station = relationship("Station", back_populates="lines")
+    users = relationship("User", back_populates="role")

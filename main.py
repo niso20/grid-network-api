@@ -6,17 +6,24 @@ from contextlib import asynccontextmanager
 import database
 from database import engine
 import models
+
+# Routes
+from routers import auth
 from routers import stations
 from routers import lines
 from routers import connections
 from routers import transformers
 from routers import manufacturers
+
 from services.MqttService import start_mqtt, mqtt_queue
 from runSQLScript import runScripts
+from seeders.BaseSeeder import runSeeders
 
 # Define the lifespan handler
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    await runSeeders()
+
     runScripts()
 
     loop = asyncio.get_running_loop()
@@ -49,6 +56,7 @@ app.include_router(lines.router)
 app.include_router(connections.router)
 app.include_router(transformers.router)
 app.include_router(manufacturers.router)
+app.include_router(auth.router)
 
 # Run this when FastAPI starts
 # @app.on_event("startup")

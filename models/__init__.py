@@ -5,6 +5,8 @@ from models.Connection import Connection
 from models.LineReading import LineReading
 from models.Manufacturer import Manufacturer
 from models.Transformer import Transformer
+from models.Role import Role
+from models.User import User
 
 # Add any more models here as you create them
 

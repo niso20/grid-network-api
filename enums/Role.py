@@ -1,5 +1,7 @@
 from enum import Enum
 
-class StationType(str, Enum):
-    TRANSMISSION = "transmission"
-    GENERATION = "generation"
+class Role(str, Enum):
+    SUPER_ADMIN = "super admin"
+    ADMIN = "admin"
+    MANAGER = "manager"
+    OPERATOR = "operator"
