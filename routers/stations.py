@@ -3,10 +3,13 @@ from starlette import status
 from models import Station
 from typing import List
 from middlewares.DbMiddleware import DB
+from middlewares.UserMiddleware import User, SuperAdminUser, AdminUser, ManagerUser, OperatorUser
+
 from resources.StationResource import StationResource
 from requests.StationRequest import CreateStation, UpdateStation
 from services.StationService import StationService
 from services.LineService import LineService
+from enums.Role import Role
 import collections.abc
 
 router = APIRouter(
@@ -15,7 +18,7 @@ router = APIRouter(
 )
 
 @router.get("", status_code=status.HTTP_200_OK, response_model=List[StationResource], response_model_by_alias=False)
-async def get_all(db: DB):
+async def get_all(db: DB, currentUser: ManagerUser):
     stationService = StationService(db)
     # stations = db.query(Station).all()
     stations = stationService.getStations()

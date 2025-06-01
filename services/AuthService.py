@@ -33,6 +33,7 @@ class AuthService:
         secretKey = os.getenv("JWT_SECRET")
         Algorithm = 'HS256'
         encode = {
+            'id': user.id,
             'username': user.username,
             'firstname': user.firstname,
             'surname': user.surname,
