@@ -3,11 +3,12 @@ from WebSocketManager import manager
 from fastapi.middleware.cors import CORSMiddleware
 import asyncio
 from contextlib import asynccontextmanager
-import database
 from database import engine
 import models
 
 # Routes
+import time
+import os
 from routers import auth
 from routers import stations
 from routers import lines
@@ -22,6 +23,7 @@ from seeders.BaseSeeder import runSeeders
 # Define the lifespan handler
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    print(os.environ.get("SQLALCHEMY_DATABASE_URL"))
     await runSeeders()
 
     runScripts()

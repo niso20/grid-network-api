@@ -4,6 +4,7 @@ import os
 import paho.mqtt.client as mqtt
 from paho.mqtt.client import CallbackAPIVersion
 from dotenv import load_dotenv
+from services.FrequencyService import ROCOFCalculator
 
 # Load environment variables
 load_dotenv()
@@ -17,6 +18,7 @@ CLIENT_ID = os.getenv("AWS_CLIENT_ID")
 
 # Queue to hold incoming MQTT data before processing
 mqtt_queue = asyncio.Queue()
+rocofCalculator = ROCOFCalculator(window_size=900, sampling_interval=2.0)
 
 def normalize_payload(payload: dict) -> dict:
     result = {}

@@ -36,8 +36,6 @@ async def get_current_user(token: Annotated[str, Depends(oauth2_bearer)]):
     except JWTError:
         print('an error occurred')
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='Could not validate user')
-    finally:
-        db.close()
 
 def require_role(required_role: str):
     async def role_checker(user=Depends(get_current_user)):
