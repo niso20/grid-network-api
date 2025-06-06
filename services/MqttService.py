@@ -22,25 +22,36 @@ rocofCalculator = ROCOFCalculator(window_size=900, sampling_interval=2.0)
 
 def normalize_payload(payload: dict) -> dict:
     result = {}
-
+    # print("payload")
+    # print(payload.items())
     # Lowercase top-level keys except 'units' or 'lines'
     for key, value in payload.items():
-        if key not in ['units', 'lines']:
+        if key not in ['units', 'lines', 'transformers']:
             result[key.lower()] = value
 
     # Use 'units' or 'lines' as components
-    raw_components = payload.get("units") or payload.get("lines") or []
+    raw_components = payload.get("units") or payload.get("lines") or payload.get("transformers") or payload.get("units") or []
 
     components = []
+    # print("raw components")
+    # print(raw_components)
     for comp in raw_components:
+        # if not isinstance(comp, dict):
+        #     continue
+
         comp_id = comp.get("id", "").lower()
         data = {}
 
         # Find the first key that is not 'id' (e.g., 'gd', 'td', 'pd')
         nested_key = next((k for k in comp if k != "id"), None)
         if nested_key:
+            # print("comp")
+            # print(comp[nested_key])
+            # if isinstance(comp[nested_key], dict):
             for k, v in comp[nested_key].items():
                 data[k.lower()] = v
+            # else:
+            #     data[nested_key.lower()] = comp[nested_key]
 
         components.append({
             "id": comp_id,
@@ -61,14 +72,18 @@ def start_mqtt(loop: asyncio.AbstractEventLoop):
 
     # This function is triggered when an MQTT message is received
     def on_message(client, userdata, msg):
+        # print("message")
         try:
             # Decode payload from bytes to JSON
             payload = json.loads(msg.payload.decode())
+            # print('mqtt')
+            # print(payload)
 
             # Normalize the payload
             normalized = normalize_payload(payload)
 
             # print(normalized)
+            rocofCalculator.process_frequency_data(normalized)
 
             # Safely push the data to the async queue using asyncio thread-safe method
             asyncio.run_coroutine_threadsafe(mqtt_queue.put(normalized), loop)
@@ -87,6 +102,10 @@ def start_mqtt(loop: asyncio.AbstractEventLoop):
     topics = [
         ("odukpanits/tv", 0),  # QoS 0
         ("kainjits/tv", 0),  # QoS 1
+        ("ndphc/phoenix/ogun/pd", 0),
+        ("odukpanits/tv", 0),
+        ("phmains/tv", 1),
+        # ("transamadi/tv", 0)
         # ("power-grid/alerts", 2),  # QoS 2
     ]
 

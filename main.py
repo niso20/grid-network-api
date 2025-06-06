@@ -15,6 +15,7 @@ from routers import lines
 from routers import connections
 from routers import transformers
 from routers import manufacturers
+from routers import frequency
 
 from services.MqttService import start_mqtt, mqtt_queue
 from runSQLScript import runScripts
@@ -59,6 +60,7 @@ app.include_router(connections.router)
 app.include_router(transformers.router)
 app.include_router(manufacturers.router)
 app.include_router(auth.router)
+app.include_router(frequency.router)
 
 # Run this when FastAPI starts
 # @app.on_event("startup")

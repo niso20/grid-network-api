@@ -6,3 +6,4 @@ database2.py
 *.sql
 runSQLScript.py
 runSQLScript2.py
+*.txt
