@@ -3,50 +3,43 @@ from starlette import status
 from models import Station
 from typing import List
 from middlewares.DbMiddleware import DB
-from resources.LineResource import LineResource
-from requests.LineRequest import CreateLine, UpdateLine
-from services.LineService import LineService
+from resources.UnitResource import UnitResource
+from requests.UnitRequest import CreateUnit, UpdateUnit
+from services.UnitService import UnitService
 
 router = APIRouter(
-    prefix='/lines',
-    tags=['lines']
+    prefix='/units',
+    tags=['units']
 )
 
-@router.get("", status_code=status.HTTP_200_OK, response_model=List[LineResource], response_model_by_alias=False)
+@router.get("", status_code=status.HTTP_200_OK, response_model=List[UnitResource], response_model_by_alias=False)
 async def get_all(db: DB):
-    lineService = LineService(db)
-    lines = lineService.getLines()
+    unitService = UnitService(db)
+    units = unitService.getUnits()
 
-    return lines
+    return units
 
 @router.post("", status_code=status.HTTP_201_CREATED)
-async def save(db: DB, createRequest: CreateLine):
-    lineService = LineService(db)
+async def save(db: DB, createRequest: CreateUnit):
+    unitService = UnitService(db)
     data = createRequest.model_dump()
 
-    exists = lineService.getLine(data["identifier"], data["stationId"])
+    exists = unitService.getUnit(data["identifier"], data["stationId"])
 
     if(exists):
-        raise HTTPException(status_code=400, detail="Line exists")
+        raise HTTPException(status_code=400, detail="Unit exists")
 
-    lineService.save(data)
+    unitService.save(data)
 
 
-@router.put("/{identifier}", status_code=status.HTTP_201_CREATED)
-async def save(db: DB, updateRequest: UpdateLine, identifier: str = Path()):
-    lineService = LineService(db)
+@router.put("/{id}", status_code=status.HTTP_201_CREATED)
+async def save(db: DB, updateRequest: UpdateUnit, id: int = Path()):
+    unitService = UnitService(db)
     data = updateRequest.model_dump()
 
-    line = lineService.getLine(identifier)
+    unit = unitService.getUnitById(id)
 
-    if line:
-        lineService.update(data, line)
+    if unit:
+        unitService.update(data, unit)
     else:
-        if (
-                "name" in data and data["name"] is not None
-                and
-                "identifier" in data and data["identifier"] is not None
-        ):
-            lineService.save(data)
-        else:
-            raise HTTPException(status_code=400, detail="Line does not exist")
+       raise HTTPException(status_code=400, detail="Unit does not exist")

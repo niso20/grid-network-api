@@ -1,4 +1,4 @@
 from services.handlers.BaseHandler import BaseHandler
 
-class RiversHandler(BaseHandler):
+class ShiroroHandler(BaseHandler):
     pass

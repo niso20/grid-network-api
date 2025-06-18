@@ -1,4 +1,4 @@
 from services.handlers.BaseHandler import BaseHandler
 
-class EgbinHandler(BaseHandler):
+class IhovborNippHandler(BaseHandler):
     pass

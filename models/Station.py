@@ -21,4 +21,5 @@ class Station(Base, TimestampMixin):
     location = Column(String, nullable=True)
     type = Column(String, nullable=True)
     lines = relationship("Line", back_populates="station")
+    units = relationship("Unit", back_populates="station")
     transformers = relationship("Transformer", back_populates="station")

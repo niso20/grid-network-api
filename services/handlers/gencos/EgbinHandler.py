@@ -1,4 +1,4 @@
 from services.handlers.BaseHandler import BaseHandler
 
-class AfamVHandler(BaseHandler):
+class EgbinHandler(BaseHandler):
     pass

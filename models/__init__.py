@@ -1,8 +1,10 @@
 # models/__init__.py
 from models.Line import Line
+from models.Unit import Unit
 from models.Station import Station
 from models.Connection import Connection
 from models.LineReading import LineReading
+from models.UnitReading import UnitReading
 from models.Manufacturer import Manufacturer
 from models.Transformer import Transformer
 from models.Role import Role

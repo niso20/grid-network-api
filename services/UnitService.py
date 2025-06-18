@@ -1,49 +1,54 @@
 from middlewares.DbMiddleware import DB
 from typing import TypedDict, Optional
-from models import Line
+from models import Unit
 
-class LineType(TypedDict):
+class UnitType(TypedDict):
     name: Optional[str] = None
     identifier: Optional[str] = None
     voltageLevel: Optional[float] = None
     stationId: Optional[int] = None
-    x: Optional[int] = None
-    y: Optional[int] = None
+    inertia: Optional[float] = None
+    active: Optional[bool] = None
 
-class LineService:
+class UnitService:
 
     def __init__(self, db:DB):
         self.__db = db
 
-    def save(self, data:LineType):
-        lineModel = Line(
+    def save(self, data:UnitType):
+        unitModel = Unit(
             name=data["name"],
             identifier=data["identifier"],
             station_id=data["stationId"],
-            voltage_level=data.get("voltageLevel")
+            voltage_level=data.get("voltageLevel"),
+            inertia = data["inertia"],
+            active=data.get("active"),
         )
 
-        self.__db.add(lineModel)
+        self.__db.add(unitModel)
         self.__db.commit()
-        self.__db.refresh(lineModel)
+        self.__db.refresh(unitModel)
 
-        return lineModel
+        return unitModel
 
-    def update(self, data:LineType, line:Line):
-        if "name" in data and data["name"] is not None: line.name = data["name"]
-        if "identifier" in data and data["identifier"] is not None: line.identifier = data["identifier"]
-        if "voltageLevel" in data and data["voltageLevel"] is not None: line.voltage_level = data["voltageLevel"]
-        if "x" in data and data["x"] is not None: line.x = data["x"]
-        if "y" in data and data["y"] is not None: line.y = data["y"]
-        if "stationId" in data and data["stationId"] is not None: line.station_id = data["stationId"]
+    def update(self, data:UnitType, unit:Unit):
+        if "name" in data and data["name"] is not None: unit.name = data["name"]
+        if "identifier" in data and data["identifier"] is not None: unit.identifier = data["identifier"]
+        if "voltageLevel" in data and data["voltageLevel"] is not None: unit.voltage_level = data["voltageLevel"]
+        if "inertia" in data and data["inertia"] is not None: unit.inertia = data["inertia"]
+        if "active" in data and data["active"] is not None: unit.active = data["active"]
+        if "stationId" in data and data["stationId"] is not None: unit.station_id = data["stationId"]
 
         self.__db.commit()
-        self.__db.refresh(line)
+        self.__db.refresh(unit)
 
-        return line
+        return unit
 
-    def getLines(self):
-        return self.__db.query(Line).all()
+    def getUnits(self):
+        return self.__db.query(Unit).all()
 
-    def getLine(self, identifier, stationId):
-        return self.__db.query(Line).filter(Line.station_id == stationId).filter(Line.identifier == identifier).first()
+    def getUnit(self, identifier, stationId):
+        return self.__db.query(Unit).filter(Unit.station_id == stationId).filter(Unit.identifier == identifier).first()
+
+    def getUnitById(self, id):
+        return self.__db.query(Unit).filter(Unit.id == id).first()

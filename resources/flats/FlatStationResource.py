@@ -8,6 +8,7 @@ class FlatStationResource(BaseModel):
     name: str
     voltageLevel: Optional[float] = Field(None, alias="voltage_level")
     display: bool
+    type: str
     x: int
     y: int
     width: int

@@ -1,6 +1,7 @@
 from pydantic import BaseModel, Field, ConfigDict
 from typing import List, Optional
 from resources.flats.FlatLineResource import FlatLineResource
+from resources.flats.FlatUnitResource import FlatUnitResource
 from resources.flats.FlatTransformerResource import FlatTransformerResource
 
 class StationResource(BaseModel):
@@ -9,11 +10,13 @@ class StationResource(BaseModel):
     name: str
     voltageLevel: Optional[float] = Field(None, alias="voltage_level")  # rename in response
     display: bool
+    type: str
     x: int
     y: int
     width: int
     height: int
     lines: Optional[List[FlatLineResource]] = None  # optional!
+    units: Optional[List[FlatUnitResource]] = None  # optional!
     transformers: Optional[List[FlatTransformerResource]] = None
     # lines: List[LineResource] = []
 

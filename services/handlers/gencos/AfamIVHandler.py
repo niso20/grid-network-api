@@ -1,4 +1,4 @@
 from services.handlers.BaseHandler import BaseHandler
 
-class KAINJITSHandler(BaseHandler):
+class AfamIVHandler(BaseHandler):
     pass
